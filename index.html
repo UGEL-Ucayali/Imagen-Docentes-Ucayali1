@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Foto - Control Docente Ucayali</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      width: 100%;
+      padding: 40px;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: #2c3e50;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #7f8c8d;
+      font-size: 16px;
+    }
+
+    .badge {
+      background: #667eea;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .step {
+      display: none;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      color: #2c3e50;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="tel"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #95a5a6;
+      margin-top: 4px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #7f8c8d;
+    }
+
+    .camera-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      background: #f5f5f5;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    video, 
+    .preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .camera-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.3) 100%);
+    }
+
+    .camera-guide {
+      text-align: center;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .camera-guide-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .camera-guide-tips {
+      font-size: 14px;
+    }
+
+    .capture-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 5px solid white;
+      background: #667eea;
+      cursor: pointer;
+      margin: 0 auto;
+      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+    }
+
+    .capture-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .capture-btn:active {
+      transform: scale(0.95);
+    }
+
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .info-box-title {
+      font-weight: bold;
+      color: #1976d2;
+      margin-bottom: 8px;
+    }
+
+    .info-box-text {
+      color: #424242;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .success-icon {
+      font-size: 80px;
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .success-message {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .error-message {
+      background: #ffebee;
+      border-left: 4px solid #f44336;
+      padding: 15px;
+      border-radius: 8px;
+      color: #c62828;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 25px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .btn {
+        padding: 14px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- ERROR MESSAGE -->
+    <div id="errorMessage" class="error-message">
+      <strong>⚠️ Error:</strong> <span id="errorText"></span>
+    </div>
+
+    <!-- STEP 1: LOGIN -->
+    <div id="step1" class="step active">
+      <div class="header">
+        <span class="badge">📸 Paso 1 de 3</span>
+        <h1>Registro de Foto</h1>
+        <p>Control Docente - UGEL Ucayali</p>
+      </div>
+
+      <div class="info-box">
+        <div class="info-box-title">📋 Instrucciones</div>
+        <div class="info-box-text">
+          Ingresa tu identificador y código de plaza para registrar tu foto de referencia oficial.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="identificador">Identificador</label>
+        <input 
+          type="tel" 
+          id="identificador" 
+          placeholder="12345678" 
+          maxlength="8"
+          autocomplete="off"
+        >
+        <div class="hint">8 números</div>
+      </div>
+
+      <div class="form-group">
+        <label for="codigoPlaza">Código de Plaza</label>
+        <input 
+          type="text" 
+          id="codigoPlaza" 
+          placeholder="AB12CD34EF56"
+          maxlength="13"
+          autocomplete="off"
+          style="text-transform: uppercase;"
+        >
+        <div class="hint">11-13 caracteres</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="validarYContinuar()">
+        Continuar →
+      </button>
+    </div>
+
+    <!-- STEP 2: CAMERA -->
+    <div id="step2" class="step">
+      <div class="header">
+        <span class="badge">📸 Paso 2 de 3</span>
+        <h1>Toma tu Foto</h1>
+        <p>Asegúrate de tener buena iluminación</p>
+      </div>
+
+      <div class="info-box">
+        <div class="info-box-title">💡 Consejos para una buena foto</div>
+        <div class="info-box-text">
+          • Colócate en un lugar con buena luz<br>
+          • Mira directamente a la cámara<br>
+          • Evita sombras en tu rostro<br>
+          • No uses gafas de sol o gorras
+        </div>
+      </div>
+
+      <div class="camera-container">
+        <video id="video" autoplay playsinline></video>
+        <div class="camera-overlay">
+          <div class="camera-guide">
+            <div class="camera-guide-title">Centra tu rostro</div>
+            <div class="camera-guide-tips">Mantén tu cara visible y bien iluminada</div>
+          </div>
+          <div class="capture-btn" onclick="capturarFoto()">
+            📸
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="volverAlLogin()">
+        ← Volver
+      </button>
+    </div>
+
+    <!-- STEP 3: PREVIEW -->
+    <div id="step3" class="step">
+      <div class="header">
+        <span class="badge">✅ Paso 3 de 3</span>
+        <h1>Verifica tu Foto</h1>
+        <p>¿Se ve bien tu rostro?</p>
+      </div>
+
+      <div class="camera-container">
+        <img id="preview" class="preview-img" alt="Vista previa">
+      </div>
+
+      <button class="btn btn-primary" onclick="confirmarYSubir()" id="btnConfirmar">
+        ✓ Confirmar y Guardar
+      </button>
+
+      <button class="btn btn-secondary" onclick="tomarOtraFoto()">
+        🔄 Tomar otra foto
+      </button>
+    </div>
+
+    <!-- STEP 4: SUCCESS -->
+    <div id="step4" class="step">
+      <div class="success-icon">✅</div>
+      <div class="success-message">
+        <strong>¡Registro Completado!</strong><br><br>
+        Tu foto de referencia ha sido guardada correctamente.<br><br>
+        Ya puedes cerrar esta página.
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <div>Guardando tu foto...</div>
+    </div>
+  </div>
+
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <script type="module">
+    // ==================== CONFIGURACIÓN FIREBASE ====================
+    const FIREBASE_CONFIG = {
+       apiKey: "AIzaSyD_l_MoWMWAlvZ7Ii5X6xQ7u5B1QSQP7JE",
+       authDomain: "controldocente-ucayali.firebaseapp.com",
+       projectId: "controldocente-ucayali",
+       storageBucket: "controldocente-ucayali.firebasestorage.app",
+       messagingSenderId: "473371376682",
+       appId: "1:473371376682:web:f0766027414b27aed05753"
+    };
+
+    // ==================== VARIABLES GLOBALES ====================
+    let stream = null;
+    let fotoCapturada = null;
+    let datosUsuario = {
+      identificador: '',
+      codigoPlaza: ''
+    };
+
+    // ==================== FUNCIONES DE NAVEGACIÓN ====================
+    window.validarYContinuar = async function() {
+      const identificador = document.getElementById('identificador').value.trim();
+      const codigoPlaza = document.getElementById('codigoPlaza').value.trim().toUpperCase();
+
+      // Validaciones
+      if (!identificador || !codigoPlaza) {
+        mostrarError('Por favor completa todos los campos');
+        return;
+      }
+
+      if (identificador.length !== 8 || isNaN(identificador)) {
+        mostrarError('El identificador debe ser exactamente 8 números');
+        return;
+      }
+
+      if (codigoPlaza.length < 11 || codigoPlaza.length > 13) {
+        mostrarError('El código de plaza debe tener entre 11-13 caracteres');
+        return;
+      }
+
+      // Guardar datos
+      datosUsuario = { identificador, codigoPlaza };
+
+      // Verificar que el usuario existe en Firebase
+      try {
+        mostrarLoading(true);
+        
+        const response = await fetch(
+          `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/profesores/${identificador}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        mostrarLoading(false);
+
+        if (!response.ok) {
+          mostrarError('Identificador no encontrado en el sistema. Contacta al administrador.');
+          return;
+        }
+
+        const data = await response.json();
+        
+        // Verificar código de plaza
+        if (data.fields.codigoPlaza.stringValue !== codigoPlaza) {
+          mostrarError('Código de plaza incorrecto');
+          return;
+        }
+
+        // Todo correcto, ir a cámara
+        cambiarStep(2);
+        iniciarCamara();
+
+      } catch (error) {
+        mostrarLoading(false);
+        mostrarError('Error de conexión. Verifica tu internet.');
+        console.error(error);
+      }
+    };
+
+    window.volverAlLogin = function() {
+      detenerCamara();
+      cambiarStep(1);
+    };
+
+    window.tomarOtraFoto = function() {
+      cambiarStep(2);
+      iniciarCamara();
+    };
+
+    // ==================== FUNCIONES DE CÁMARA ====================
+    async function iniciarCamara() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: 'user',
+            width: { ideal: 1280 },
+            height: { ideal: 1280 }
+          }
+        });
+
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+      } catch (error) {
+        mostrarError('No se pudo acceder a la cámara. Verifica los permisos.');
+        console.error('Error accediendo a cámara:', error);
+      }
+    }
+
+    function detenerCamara() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+    }
+
+    window.capturarFoto = function() {
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+
+      // Configurar canvas con dimensiones del video
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      // Capturar frame actual
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Optimizar imagen
+      fotoCapturada = optimizarImagen(canvas);
+
+      // Mostrar preview
+      document.getElementById('preview').src = fotoCapturada;
+
+      // Detener cámara
+      detenerCamara();
+
+      // Cambiar a step 3
+      cambiarStep(3);
+    };
+
+    // ==================== OPTIMIZACIÓN DE IMAGEN ====================
+    function optimizarImagen(canvas) {
+      const MAX_WIDTH = 800;
+      const MAX_HEIGHT = 800;
+      let quality = 0.75;
+
+      // Crear nuevo canvas para redimensionar
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+
+      let width = canvas.width;
+      let height = canvas.height;
+
+      // Calcular nuevas dimensiones manteniendo proporción
+      if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+        const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
+        width = Math.floor(width * ratio);
+        height = Math.floor(height * ratio);
+      }
+
+      tempCanvas.width = width;
+      tempCanvas.height = height;
+      tempCtx.drawImage(canvas, 0, 0, width, height);
+
+      // Convertir a base64 con compresión
+      let dataUrl = tempCanvas.toDataURL('image/jpeg', quality);
+
+      // Reducir calidad si es muy pesada (max 250KB)
+      let iterations = 0;
+      while (dataUrl.length > 250 * 1024 * 1.37 && quality > 0.3 && iterations < 5) {
+        quality -= 0.1;
+        dataUrl = tempCanvas.toDataURL('image/jpeg', quality);
+        iterations++;
+      }
+
+      console.log(`✅ Imagen optimizada: ${Math.round(dataUrl.length / 1024)}KB (calidad: ${Math.round(quality * 100)}%)`);
+
+      return dataUrl;
+    }
+
+    // ==================== SUBIR A FIREBASE ====================
+    window.confirmarYSubir = async function() {
+      if (!fotoCapturada) {
+        mostrarError('Error: no hay foto capturada');
+        return;
+      }
+
+      try {
+        mostrarLoading(true);
+        document.getElementById('btnConfirmar').disabled = true;
+
+        // Actualizar documento en Firestore usando REST API
+        const updateData = {
+          fields: {
+            fotoReferencia: {
+              stringValue: fotoCapturada
+            },
+            fotoReferenciaSubidaEn: {
+              timestampValue: new Date().toISOString()
+            },
+            fotoReferenciaVerificada: {
+              booleanValue: false
+            }
+          }
+        };
+
+        const response = await fetch(
+          `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/profesores/${datosUsuario.identificador}?updateMask.fieldPaths=fotoReferencia&updateMask.fieldPaths=fotoReferenciaSubidaEn&updateMask.fieldPaths=fotoReferenciaVerificada`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateData)
+          }
+        );
+
+        mostrarLoading(false);
+
+        if (!response.ok) {
+          throw new Error('Error guardando la foto');
+        }
+
+        console.log('✅ Foto guardada exitosamente');
+        cambiarStep(4);
+
+      } catch (error) {
+        mostrarLoading(false);
+        document.getElementById('btnConfirmar').disabled = false;
+        mostrarError('Error guardando la foto. Intenta de nuevo.');
+        console.error('Error:', error);
+      }
+    };
+
+    // ==================== UTILIDADES ====================
+    function cambiarStep(numero) {
+      document.querySelectorAll('.step').forEach(step => {
+        step.classList.remove('active');
+      });
+      document.getElementById(`step${numero}`).classList.add('active');
+      ocultarError();
+    }
+
+    function mostrarError(mensaje) {
+      document.getElementById('errorText').textContent = mensaje;
+      document.getElementById('errorMessage').classList.add('show');
+      
+      setTimeout(() => {
+        ocultarError();
+      }, 5000);
+    }
+
+    function ocultarError() {
+      document.getElementById('errorMessage').classList.remove('show');
+    }
+
+    function mostrarLoading(mostrar) {
+      const loading = document.getElementById('loading');
+      const container = document.querySelector('.container');
+      
+      if (mostrar) {
+        loading.classList.remove('hidden');
+        container.style.opacity = '0.5';
+        container.style.pointerEvents = 'none';
+      } else {
+        loading.classList.add('hidden');
+        container.style.opacity = '1';
+        container.style.pointerEvents = 'auto';
+      }
+    }
+
+    // ==================== INICIALIZACIÓN ====================
+    console.log('✅ Página de registro de foto cargada');
+  </script>
+</body>
+</html>
