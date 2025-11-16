@@ -332,12 +332,12 @@
       <div class="info-box">
         <div class="info-box-title">📋 Instrucciones</div>
         <div class="info-box-text">
-          Ingresa tu identificador y código de plaza para registrar tu foto de referencia oficial.
+          Ingresa tu DNI y código de plaza para registrar tu foto de referencia oficial.
         </div>
       </div>
 
       <div class="form-group">
-        <label for="identificador">Identificador</label>
+        <label for="identificador">DNI</label>
         <input 
           type="tel" 
           id="identificador" 
@@ -473,7 +473,7 @@
       }
 
       if (identificador.length !== 8 || isNaN(identificador)) {
-        mostrarError('El identificador debe ser exactamente 8 números');
+        mostrarError('El DNI debe ser exactamente 8 números');
         return;
       }
 
@@ -502,7 +502,7 @@
         mostrarLoading(false);
 
         if (!response.ok) {
-          mostrarError('Identificador no encontrado en el sistema. Contacta al administrador.');
+          mostrarError('DNI no encontrado en el sistema. Contacta con la UGEL de tu localidad.');
           return;
         }
 
