@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  // Usar config del archivo externo
+  const app = initializeApp(FIREBASE_CONFIG);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro de Foto - Control Docente Ucayali</title>
@@ -423,8 +425,7 @@
         🔄 Tomar otra foto
       </button>
     </div>
-    // Usar config del archivo externo
-    const app = initializeApp(FIREBASE_CONFIG);
+
     <!-- STEP 4: SUCCESS -->
     <div id="step4" class="step">
       <div class="success-icon">✅</div>
