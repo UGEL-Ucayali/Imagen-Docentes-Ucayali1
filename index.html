@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  // Usar config del archivo externo
-  const app = initializeApp(FIREBASE_CONFIG);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro de Foto - Control Docente Ucayali</title>
@@ -447,6 +445,8 @@
 
   <script type="module">
     // ==================== CONFIGURACIÓN FIREBASE ====================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+    const app = initializeApp(FIREBASE_CONFIG);
 
     // ==================== VARIABLES GLOBALES ====================
     let stream = null;
