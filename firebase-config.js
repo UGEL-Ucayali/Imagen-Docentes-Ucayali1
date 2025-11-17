@@ -1,4 +1,4 @@
-const FIREBASE_CONFIG = { 
+window.FIREBASE_CONFIG = {
   apiKey: "AIzaSyD_l_MoWMWAlvZ7Ii5X6xQ7u5B1QSQP7JE", 
   authDomain: "controldocente-ucayali.firebaseapp.com", 
   projectId: "controldocente-ucayali", 
