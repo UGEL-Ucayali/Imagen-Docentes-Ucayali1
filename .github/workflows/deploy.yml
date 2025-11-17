@@ -1,29 +1,24 @@
-name: Deploy to GitHub Pages
+name: Deploy
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Generate Firebase Config
+
+      - name: Inject Firebase secrets in index.html
         run: |
-          cat > firebase-config.js << EOF
-          window.FIREBASE_CONFIG = {
-            apiKey: "${{ secrets.FIREBASE_API_KEY }}",
-            authDomain: "${{ secrets.FIREBASE_AUTH_DOMAIN }}",
-            projectId: "${{ secrets.FIREBASE_PROJECT_ID }}",
-            storageBucket: "${{ secrets.FIREBASE_STORAGE_BUCKET }}",
-            messagingSenderId: "${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}",
-            appId: "${{ secrets.FIREBASE_APP_ID }}"
-          };
-          EOF
-      
+          sed -i 's#__FIREBASE_API_KEY__#${{ secrets.FIREBASE_API_KEY }}#g' index.html
+          sed -i 's#__FIREBASE_AUTH_DOMAIN__#${{ secrets.FIREBASE_AUTH_DOMAIN }}#g' index.html
+          sed -i 's#__FIREBASE_PROJECT_ID__#${{ secrets.FIREBASE_PROJECT_ID }}#g' index.html
+          sed -i 's#__FIREBASE_STORAGE_BUCKET__#${{ secrets.FIREBASE_STORAGE_BUCKET }}#g' index.html
+          sed -i 's#__FIREBASE_MESSAGING_SENDER_ID__#${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}#g' index.html
+          sed -i 's#__FIREBASE_APP_ID__#${{ secrets.FIREBASE_APP_ID }}#g' index.html
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
