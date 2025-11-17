@@ -2,45 +2,30 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]   # O la rama que uses para la página
-  workflow_dispatch:        # Para poder lanzarlo a mano si quieres
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Generar index.html desde plantilla
-        run: |
-          sed \
-            -e "s|\${FIREBASE_API_KEY}|${{ secrets.FIREBASE_API_KEY }}|g" \
-            -e "s|\${FIREBASE_AUTH_DOMAIN}|${{ secrets.FIREBASE_AUTH_DOMAIN }}|g" \
-            -e "s|\${FIREBASE_PROJECT_ID}|${{ secrets.FIREBASE_PROJECT_ID }}|g" \
-            -e "s|\${FIREBASE_STORAGE_BUCKET}|${{ secrets.FIREBASE_STORAGE_BUCKET }}|g" \
-            -e "s|\${FIREBASE_MESSAGING_SENDER_ID}|${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}|g" \
-            -e "s|\${FIREBASE_APP_ID}|${{ secrets.FIREBASE_APP_ID }}|g" \
-            index.template.html > index.html
-
-      - name: Subir artefacto para GitHub Pages
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-
   deploy:
     runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v3
+      
+      - name: Generate Firebase Config
+        run: |
+          cat > firebase-config.js << EOF
+          window.FIREBASE_CONFIG = {
+            apiKey: "${{ secrets.FIREBASE_API_KEY }}",
+            authDomain: "${{ secrets.FIREBASE_AUTH_DOMAIN }}",
+            projectId: "${{ secrets.FIREBASE_PROJECT_ID }}",
+            storageBucket: "${{ secrets.FIREBASE_STORAGE_BUCKET }}",
+            messagingSenderId: "${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}",
+            appId: "${{ secrets.FIREBASE_APP_ID }}"
+          };
+          EOF
+      
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
