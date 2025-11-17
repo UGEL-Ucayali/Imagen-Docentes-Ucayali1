@@ -313,7 +313,6 @@
       }
     }
   </style>
-  <script src="firebase-config.js"></script>
 </head>
 <body>
   <div class="container">
@@ -445,7 +444,9 @@
 
   <script type="module">
     // ==================== CONFIGURACIÓN FIREBASE ====================
-  const firebaseConfig = {
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+
+  const FIREBASE_CONFIG = {
     apiKey: "__FIREBASE_API_KEY__",
     authDomain: "__FIREBASE_AUTH_DOMAIN__",
     projectId: "__FIREBASE_PROJECT_ID__",
@@ -453,7 +454,7 @@
     messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
     appId: "__FIREBASE_APP_ID__"
   };
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+
   const app = initializeApp(FIREBASE_CONFIG);
 
     // ==================== VARIABLES GLOBALES ====================
