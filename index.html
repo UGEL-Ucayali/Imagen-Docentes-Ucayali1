@@ -530,12 +530,24 @@
           return;
         }
 
-        // ✅ VERIFICAR SI YA TIENE FOTO
-        if (data.fields.fotoReferencia && data.fields.fotoReferencia.stringValue) {
-          mostrarError('Ya has registrado tu foto anteriormente. No es necesario volver a subirla.');
+        // ✅ VERIFICAR SI YA TIENE FOTO VERIFICADA
+        if (data.fields.fotoReferencia &&
+          data.fields.fotoReferencia.stringValue &&
+          data.fields.fotoReferenciaVerificada &&
+          data.fields.fotoReferenciaVerificada.booleanValue === true) {
+          mostrarError('Ya has registrado tu foto anteriormente y ha sido verificada. No es necesario volver a subirla.');
           document.getElementById('identificador').value = '';
           document.getElementById('codigoPlaza').value = '';
           return;
+        }
+
+        // Si tiene foto pero NO está verificada, puede subir nueva
+        if (data.fields.fotoReferencia &&
+          data.fields.fotoReferencia.stringValue &&
+          (!data.fields.fotoReferenciaVerificada || data.fields.fotoReferenciaVerificada.booleanValue === false)) {
+          if (!confirm('Ya tienes una foto pendiente de verificación. ¿Deseas reemplazarla?')) {
+            return;
+          }
         }
 
         // Todo correcto, ir a cámara
