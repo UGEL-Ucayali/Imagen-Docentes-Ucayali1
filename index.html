@@ -455,6 +455,7 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
     const FIREBASE_CONFIG = {
       apiKey: "__FIREBASE_API_KEY__",
@@ -673,19 +674,29 @@
         mostrarLoading(true);
         document.getElementById('btnConfirmar').disabled = true;
 
-        // Convertir a blob
+        // 1. Intentar eliminar foto antigua si existe
+        try {
+          const oldPhotoRef = ref(storage, `referencias/${datosUsuario.identificador}.jpg`);
+          await deleteObject(oldPhotoRef);
+          console.log('🗑️ Foto antigua eliminada');
+        } catch (deleteError) {
+          // Si no existe foto antigua, continuar normalmente
+          console.log('ℹ️ No hay foto anterior para eliminar');
+        }
+
+        // 2. Convertir a blob
         const response = await fetch(fotoCapturada);
         const blob = await response.blob();
 
-        // Subir a Storage
+        // 3. Subir nueva foto a Storage
         const storageRef = ref(storage, `referencias/${datosUsuario.identificador}.jpg`);
         await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' });
         const url = await getDownloadURL(storageRef);
 
-        // Guardar URL en Firestore
+        // 4. Guardar URL en Firestore
         const docRef = doc(db, 'profesores', datosUsuario.identificador);
         await updateDoc(docRef, {
-          fotoReferencia: url,  // ← URL en vez de base64
+          fotoReferencia: url,
           fotoReferenciaSubidaEn: new Date().toISOString(),
           fotoReferenciaVerificada: false
         });
