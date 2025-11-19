@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Foto - Docente al Día Ucayali</title>
+  <title>Registro de Foto - Control Docente Ucayali</title>
   <style>
     * {
       margin: 0;
@@ -37,7 +36,6 @@
         opacity: 0;
         transform: translateY(30px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
@@ -80,13 +78,8 @@
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .form-group {
@@ -169,7 +162,7 @@
       margin-bottom: 20px;
     }
 
-    video,
+    video, 
     .preview-img {
       width: 100%;
       height: 100%;
@@ -186,13 +179,13 @@
       flex-direction: column;
       justify-content: space-between;
       padding: 20px;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.3) 100%);
+      background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.3) 100%);
     }
 
     .camera-guide {
       text-align: center;
       color: white;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
 
     .camera-guide-title {
@@ -277,19 +270,9 @@
     }
 
     @keyframes shake {
-
-      0%,
-      100% {
-        transform: translateX(0);
-      }
-
-      25% {
-        transform: translateX(-10px);
-      }
-
-      75% {
-        transform: translateX(10px);
-      }
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
     }
 
     .loading {
@@ -308,9 +291,7 @@
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { transform: rotate(360deg); }
     }
 
     .hidden {
@@ -333,7 +314,6 @@
     }
   </style>
 </head>
-
 <body>
   <div class="container">
     <!-- ERROR MESSAGE -->
@@ -346,26 +326,38 @@
       <div class="header">
         <span class="badge">📸 Paso 1 de 3</span>
         <h1>Registro de Foto</h1>
-        <p>Docente al Día - UGEL Ucayali</p>
+        <p>Control Docente - UGEL Ucayali</p>
       </div>
 
       <div class="info-box">
         <div class="info-box-title">📋 Instrucciones</div>
         <div class="info-box-text">
-          Ingresa tu DNI y código de plaza para registrar tu foto de referencia oficial.
+          Ingresa tu identificador y código de plaza para registrar tu foto de referencia oficial.
         </div>
       </div>
 
       <div class="form-group">
-        <label for="identificador">DNI</label>
-        <input type="tel" id="identificador" placeholder="12345678" maxlength="8" autocomplete="off">
+        <label for="identificador">Identificador</label>
+        <input 
+          type="tel" 
+          id="identificador" 
+          placeholder="12345678" 
+          maxlength="8"
+          autocomplete="off"
+        >
         <div class="hint">8 números</div>
       </div>
 
       <div class="form-group">
         <label for="codigoPlaza">Código de Plaza</label>
-        <input type="text" id="codigoPlaza" placeholder="AB12CD34EF56" maxlength="13" autocomplete="off"
-          style="text-transform: uppercase;">
+        <input 
+          type="text" 
+          id="codigoPlaza" 
+          placeholder="AB12CD34EF56"
+          maxlength="13"
+          autocomplete="off"
+          style="text-transform: uppercase;"
+        >
         <div class="hint">11-13 caracteres</div>
       </div>
 
@@ -451,18 +443,18 @@
   <canvas id="canvas" style="display:none;"></canvas>
 
   <script type="module">
-    // ==================== CONFIGURACIÓN FIREBASE ====================
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
-    const FIREBASE_CONFIG = {
-      apiKey: "__FIREBASE_API_KEY__",
-      authDomain: "__FIREBASE_AUTH_DOMAIN__",
-      projectId: "__FIREBASE_PROJECT_ID__",
-      storageBucket: "__FIREBASE_STORAGE_BUCKET__",
-      messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
-      appId: "__FIREBASE_APP_ID__"
+    // Cargar configuración desde archivo externo
+    const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
+      apiKey: "PLACEHOLDER",
+      authDomain: "PLACEHOLDER",
+      projectId: "PLACEHOLDER",
+      storageBucket: "PLACEHOLDER",
+      messagingSenderId: "PLACEHOLDER",
+      appId: "PLACEHOLDER"
     };
 
     const app = initializeApp(FIREBASE_CONFIG);
@@ -478,7 +470,7 @@
     };
 
     // ==================== FUNCIONES DE NAVEGACIÓN ====================
-    window.validarYContinuar = async function () {
+    window.validarYContinuar = async function() {
       const identificador = document.getElementById('identificador').value.trim();
       const codigoPlaza = document.getElementById('codigoPlaza').value.trim().toUpperCase();
 
@@ -504,37 +496,28 @@
       // Verificar que el usuario existe en Firebase
       try {
         mostrarLoading(true);
-
-        const response = await fetch(
-          `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/profesores/${identificador}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        );
+        
+        const profesorRef = doc(db, 'profesores', identificador);
+        const profesorSnap = await getDoc(profesorRef);
 
         mostrarLoading(false);
 
-        if (!response.ok) {
+        if (!profesorSnap.exists()) {
           mostrarError('Identificador no encontrado en el sistema. Contacta al administrador.');
           return;
         }
 
-        const data = await response.json();
-
+        const data = profesorSnap.data();
+        
         // Verificar código de plaza
-        if (data.fields.codigoPlaza.stringValue !== codigoPlaza) {
+        if (data.codigoPlaza !== codigoPlaza) {
           mostrarError('Código de plaza incorrecto');
           return;
         }
 
         // ✅ VERIFICAR SI YA TIENE FOTO VERIFICADA
-        if (data.fields.fotoReferencia &&
-          data.fields.fotoReferencia.stringValue &&
-          data.fields.fotoReferenciaVerificada &&
-          data.fields.fotoReferenciaVerificada.booleanValue === true) {
+        if (data.fotoReferencia && 
+            data.fotoReferenciaVerificada === true) {
           mostrarError('Ya has registrado tu foto anteriormente y ha sido verificada. No es necesario volver a subirla.');
           document.getElementById('identificador').value = '';
           document.getElementById('codigoPlaza').value = '';
@@ -542,9 +525,8 @@
         }
 
         // Si tiene foto pero NO está verificada, puede subir nueva
-        if (data.fields.fotoReferencia &&
-          data.fields.fotoReferencia.stringValue &&
-          (!data.fields.fotoReferenciaVerificada || data.fields.fotoReferenciaVerificada.booleanValue === false)) {
+        if (data.fotoReferencia && 
+            data.fotoReferenciaVerificada !== true) {
           if (!confirm('Ya tienes una foto pendiente de verificación. ¿Deseas reemplazarla?')) {
             return;
           }
@@ -561,12 +543,12 @@
       }
     };
 
-    window.volverAlLogin = function () {
+    window.volverAlLogin = function() {
       detenerCamara();
       cambiarStep(1);
     };
 
-    window.tomarOtraFoto = function () {
+    window.tomarOtraFoto = function() {
       cambiarStep(2);
       iniciarCamara();
     };
@@ -597,7 +579,7 @@
       }
     }
 
-    window.capturarFoto = function () {
+    window.capturarFoto = function() {
       const video = document.getElementById('video');
       const canvas = document.getElementById('canvas');
       const context = canvas.getContext('2d');
@@ -662,8 +644,8 @@
       return dataUrl;
     }
 
-    // ==================== SUBIR A FIREBASE ====================
-    window.confirmarYSubir = async function () {
+    // ==================== SUBIR A STORAGE ====================
+    window.confirmarYSubir = async function() {
       if (!fotoCapturada) {
         mostrarError('Error: no hay foto capturada');
         return;
@@ -686,12 +668,12 @@
         // 2. Convertir a blob
         const response = await fetch(fotoCapturada);
         const blob = await response.blob();
-
+        
         // 3. Subir nueva foto a Storage
         const storageRef = ref(storage, `referencias/${datosUsuario.identificador}.jpg`);
         await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' });
         const url = await getDownloadURL(storageRef);
-
+        
         // 4. Guardar URL en Firestore
         const docRef = doc(db, 'profesores', datosUsuario.identificador);
         await updateDoc(docRef, {
@@ -724,7 +706,7 @@
     function mostrarError(mensaje) {
       document.getElementById('errorText').textContent = mensaje;
       document.getElementById('errorMessage').classList.add('show');
-
+      
       setTimeout(() => {
         ocultarError();
       }, 5000);
@@ -737,7 +719,7 @@
     function mostrarLoading(mostrar) {
       const loading = document.getElementById('loading');
       const container = document.querySelector('.container');
-
+      
       if (mostrar) {
         loading.classList.remove('hidden');
         container.style.opacity = '0.5';
@@ -753,5 +735,4 @@
     console.log('✅ Página de registro de foto cargada');
   </script>
 </body>
-
 </html>
