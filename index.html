@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Foto - Control Docente Ucayali</title>
+  <title>Registro de Foto - Docente al día Ucayali</title>
   <style>
     * {
       margin: 0;
@@ -326,18 +326,18 @@
       <div class="header">
         <span class="badge">📸 Paso 1 de 3</span>
         <h1>Registro de Foto</h1>
-        <p>Control Docente - UGEL Ucayali</p>
+        <p>Docente al día - UGEL Ucayali</p>
       </div>
 
       <div class="info-box">
         <div class="info-box-title">📋 Instrucciones</div>
         <div class="info-box-text">
-          Ingresa tu identificador y código de plaza para registrar tu foto de referencia oficial.
+          Ingresa tu DNI y código de plaza para registrar tu foto de referencia oficial.
         </div>
       </div>
 
       <div class="form-group">
-        <label for="identificador">Identificador</label>
+        <label for="identificador">DNI</label>
         <input 
           type="tel" 
           id="identificador" 
@@ -481,7 +481,7 @@
       }
 
       if (identificador.length !== 8 || isNaN(identificador)) {
-        mostrarError('El identificador debe ser exactamente 8 números');
+        mostrarError('El DNI debe ser exactamente 8 números');
         return;
       }
 
@@ -503,7 +503,7 @@
         mostrarLoading(false);
 
         if (!profesorSnap.exists()) {
-          mostrarError('Identificador no encontrado en el sistema. Contacta al administrador.');
+          mostrarError('DNI no encontrado en el sistema. Contacta al administrador.');
           return;
         }
 
